@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinSmart - تسجيل الدخول</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        body { font-family: 'Cairo', sans-serif; }
+    </style>
+</head>
+<body class="bg-white">
+
+    <div class="flex min-h-screen">
+        
+        <div class="w-full lg:w-1/2 flex flex-col justify-center px-8 md:px-16 lg:px-24 py-12">
+            
+            <a href="../index.html" class="flex items-center gap-2 font-bold text-indigo-600 text-2xl mb-10 w-fit">
+                <i data-lucide="wallet" class="w-8 h-8"></i> FinSmart
+            </a>
+
+            <div class="mb-8">
+                <h1 class="text-3xl font-black text-slate-900 mb-2">مرحباً بعودتك 👋</h1>
+                <p class="text-slate-500">سجل الدخول لمتابعة أداء مشروعك.</p>
+            </div>
+
+            <form  id="login-form"class="space-y-5">
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">البريد الإلكتروني</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-slate-400">
+                            <i data-lucide="mail" class="w-5 h-5"></i>
+                        </div>
+                        <input type="email" required placeholder="name@example.com" class="block w-full pr-10 pl-3 py-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition sm:text-sm">
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="block text-sm font-medium text-slate-700">كلمة المرور</label>
+                        <a href="#" class="text-sm font-semibold text-indigo-600 hover:text-indigo-500">نسيت كلمة المرور؟</a>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-slate-400">
+                            <i data-lucide="lock" class="w-5 h-5"></i>
+                        </div>
+                        <input type="password" id="password" required placeholder="••••••••" class="block w-full pr-10 pl-10 py-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition sm:text-sm">
+                        <button type="button" onclick="togglePassword()" class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 hover:text-slate-600">
+                            <i id="eye-icon" data-lucide="eye" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition shadow-lg shadow-indigo-200">
+                    تسجيل الدخول
+                </button>
+
+                <div class="relative my-6">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-200"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-2 bg-white text-slate-500">أو تابع باستخدام</span>
+                    </div>
+                </div>
+
+                <button type="button" id="google-btn" class="w-full flex items-center justify-center gap-3 px-4 py-3 border border-slate-300 shadow-sm text-sm font-medium rounded-xl text-slate-700 bg-white hover:bg-slate-50 transition">
+                    <svg class="h-5 w-5" viewBox="0 0 24 24">
+                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                    </svg>
+                    Google
+                </button>
+            </form>
+
+            <div class="mt-8 text-center text-sm text-slate-500">
+                ليس لديك حساب؟ <a href="signup.html" class="font-bold text-indigo-600 hover:text-indigo-500">أنشئ حساباً مجانياً</a>
+            </div>
+        </div>
+
+        <div class="hidden lg:flex lg:w-1/2 bg-slate-900 relative overflow-hidden items-center justify-center p-12 text-white">
+            <div class="absolute top-0 left-0 w-full h-full opacity-10 bg-[url('https://www.transparenttextures.com/patterns/diamond-upholstery.png')]"></div>
+            
+            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-indigo-600 rounded-full mix-blend-screen filter blur-[100px] opacity-20"></div>
+
+            <div class="relative z-10 max-w-lg text-center">
+                <div class="mb-8 flex justify-center">
+                    <div class="w-20 h-20 bg-indigo-500/20 rounded-2xl flex items-center justify-center backdrop-blur-sm border border-indigo-500/30">
+                        <i data-lucide="bar-chart-2" class="w-10 h-10 text-indigo-400"></i>
+                    </div>
+                </div>
+                
+                <h2 class="text-3xl font-bold mb-4">بياناتك في أمان تام</h2>
+                <p class="text-slate-400 text-lg leading-relaxed mb-6">
+                    نستخدم أحدث تقنيات التشفير لضمان سرية حساباتك وفواتيرك. ركز في شغلك، وسيب الأرقام علينا.
+                </p>
+                
+                <div class="inline-flex items-center gap-2 bg-slate-800/50 px-4 py-2 rounded-full border border-slate-700 backdrop-blur-md">
+                    <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                    <span class="text-sm font-medium text-slate-300">أكثر من 1,000 تاجر يستخدمون FinSmart الآن</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+<script type="module">
+    // تعديل المسار: الخروج خطوة للخلف للوصول لمجلد js
+    import { auth } from '../js/firebase.js';
+    import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+    lucide.createIcons();
+
+    const loginForm = document.getElementById('login-form'); 
+
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const email = e.target.querySelector('input[type="email"]').value;
+        const password = document.getElementById('password').value;
+        const btn = e.target.querySelector('button[type="submit"]');
+
+        btn.innerText = "جاري التحقق...";
+        btn.disabled = true;
+
+        try {
+            await signInWithEmailAndPassword(auth, email, password);
+            // تعديل المسار: التوجيه للداشبورد في نفس المجلد
+            window.location.href = "dashboard.html";
+        } catch (error) {
+            console.error(error);
+            let message = "خطأ في البريد أو كلمة المرور.";
+            if (error.code === 'auth/user-not-found') message = "لا يوجد حساب بهذا البريد.";
+            if (error.code === 'auth/wrong-password') message = "كلمة المرور غير صحيحة.";
+            alert(message);
+            
+            btn.innerText = "تسجيل الدخول";
+            btn.disabled = false;
+        }
+    });
+
+    // زر جوجل
+    const googleBtn = document.getElementById('google-btn');
+    if(googleBtn) {
+        googleBtn.addEventListener('click', async () => {
+            const provider = new GoogleAuthProvider();
+            try {
+                await signInWithPopup(auth, provider);
+                // تعديل المسار: التوجيه للداشبورد في نفس المجلد
+                window.location.href = "dashboard.html";
+            } catch (error) {
+                console.error(error);
+                alert("فشل الدخول باستخدام جوجل");
+            }
+        });
+    }
+
+    window.togglePassword = function() {
+        const passwordInput = document.getElementById('password');
+        const eyeIcon = document.getElementById('eye-icon');
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            eyeIcon.setAttribute('data-lucide', 'eye-off');
+        } else {
+            passwordInput.type = 'password';
+            eyeIcon.setAttribute('data-lucide', 'eye');
+        }
+        lucide.createIcons();
+    }
+</script>
+</body>
+</html>

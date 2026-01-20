@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinSmart - Transactions</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <style> body { font-family: 'Cairo', sans-serif; } #sidebar { transition: transform 0.3s ease-in-out; } </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <div class="flex min-h-screen relative">
+        <aside id="sidebar" class="hidden md:flex w-64 bg-white border-e border-slate-200 p-6 flex-col gap-6 h-screen sticky top-0">
+            <div class="flex items-center gap-2 font-bold text-indigo-600 text-2xl mb-2"><i data-lucide="wallet" class="w-8 h-8"></i> <span data-i18n="app_name">FinSmart</span></div>
+            <nav class="flex flex-col gap-2">
+                <a href="dashboard.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-500 hover:bg-indigo-50 hover:text-indigo-700 transition-colors"><i data-lucide="trending-up" class="w-5 h-5"></i> <span data-i18n="overview">Overview</span></a>
+                <a href="insights.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-colors"><i data-lucide="alert-circle" class="w-5 h-5"></i> <span data-i18n="insights">Insights</span></a>
+                <a href="transactions.html" class="flex items-center gap-3 px-4 py-3 rounded-lg bg-indigo-50 text-indigo-700 font-medium"><i data-lucide="wallet" class="w-5 h-5"></i> <span data-i18n="transactions">Transactions</span></a>
+                <a href="inventory.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-colors"><i data-lucide="package" class="w-5 h-5"></i> <span data-i18n="inventory">Inventory</span></a>
+                <a href="reports.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-colors"><i data-lucide="bar-chart-2" class="w-5 h-5"></i> <span data-i18n="reports">Reports</span></a>
+            </nav>
+            <div class="mt-auto p-4 bg-indigo-50 rounded-xl">
+                <button id="lang-toggle" class="text-xs text-slate-600 border border-slate-300 px-2 py-1 rounded mt-2 w-full hover:bg-white transition">English</button>
+            </div>
+        </aside>
+
+        <main class="flex-1 p-4 md:p-8 max-w-5xl mx-auto w-full">
+            <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-bold text-slate-900" data-i18n="all_transactions">All Transactions</h1>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="exportToExcel()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 shadow-sm transition">
+                        <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Excel
+                    </button>
+                    <button onclick="exportToPDF()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 shadow-sm transition">
+                        <i data-lucide="file-text" class="w-4 h-4"></i> PDF
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm mb-6 flex flex-col md:flex-row gap-4 items-center justify-between">
+                <div class="relative w-full md:w-1/3">
+                    <div class="absolute inset-y-0 start-0 ps-3 flex items-center pointer-events-none text-slate-400"><i data-lucide="search" class="w-4 h-4"></i></div>
+                    <input type="text" id="search-inp" data-i18n="search_placeholder" placeholder="Search..." class="w-full ps-10 pe-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
+                </div>
+                <div class="flex gap-2 w-full md:w-auto">
+                    <select id="type-filter" class="border border-slate-300 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500 text-sm text-slate-600">
+                        <option value="all" data-i18n="all_transactions">All Types</option>
+                        <option value="INCOME" data-i18n="income">Income</option>
+                        <option value="EXPENSE" data-i18n="expense">Expense</option>
+                    </select>
+                    <input type="date" id="date-filter" class="border border-slate-300 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500 text-sm text-slate-600">
+                    <button onclick="resetFilters()" class="text-slate-500 hover:text-red-500 p-2 hover:bg-slate-100 rounded-lg transition"><i data-lucide="rotate-ccw" class="w-4 h-4"></i></button>
+                </div>
+            </div>
+
+            <div id="print-area" class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-start border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 text-slate-500 text-sm border-b border-slate-200">
+                                <th class="p-4 font-medium text-start" data-i18n="date">Date</th>
+                                <th class="p-4 font-medium text-start" data-i18n="description">Description</th>
+                                <th class="p-4 font-medium text-start" data-i18n="category">Category</th>
+                                <th class="p-4 font-medium text-start" data-i18n="type">Type</th>
+                                <th class="p-4 font-medium text-end" data-i18n="amount">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactions-list">
+                            <tr><td colspan="5" class="p-8 text-center text-slate-400" data-i18n="loading">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div id="no-results" class="hidden p-8 text-center text-slate-400" data-i18n="no_data">No transactions match.</div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        import { auth, db } from '../js/firebase.js';
+        import { initLanguage, changeLanguage, t } from '../js/translations.js';
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { collection, query, where, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initLanguage();
+            lucide.createIcons();
+        });
+
+        document.getElementById('lang-toggle').addEventListener('click', () => {
+            const current = localStorage.getItem('finsmart_lang') || 'ar';
+            changeLanguage(current === 'ar' ? 'en' : 'ar');
+            renderTable(allTransactions);
+        });
+
+        // جعل المتغير global عشان دوال التصدير تشوفه
+        window.allTransactions = [];
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) loadTransactions(user.uid);
+            else window.location.href = "login.html";
+        });
+
+        async function loadTransactions(userId) {
+            const list = document.getElementById('transactions-list');
+            const q = query(collection(db, "transactions"), where("userId", "==", userId), orderBy("date", "desc"));
+
+            try {
+                const querySnapshot = await getDocs(q);
+                window.allTransactions = []; // تحديث المتغير العام
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const jsDate = data.date ? new Date(data.date.seconds * 1000) : new Date();
+                    window.allTransactions.push({
+                        id: doc.id,
+                        text: data.text,
+                        amount: data.amount,
+                        type: data.type,
+                        category: data.category || 'General',
+                        dateObj: jsDate,
+                        dateString: jsDate.toLocaleDateString('en-CA') // تنسيق التاريخ للفرز
+                    });
+                });
+                renderTable(window.allTransactions);
+            } catch (error) {
+                console.error("Error:", error);
+                list.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-red-400">Error. Check console.</td></tr>`;
+            }
+        }
+
+        window.renderTable = function(dataArray) {
+            const list = document.getElementById('transactions-list');
+            const noResults = document.getElementById('no-results');
+            const currency = t("currency");
+            const incomeText = t("income");
+            const expenseText = t("expense");
+
+            if (dataArray.length === 0) {
+                list.innerHTML = "";
+                noResults.classList.remove('hidden');
+                return;
+            }
+
+            noResults.classList.add('hidden');
+            let html = "";
+
+            dataArray.forEach(item => {
+                const isIncome = item.type === "INCOME";
+                const typeBadge = isIncome 
+                    ? `<span class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-bold">${incomeText}</span>`
+                    : `<span class="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-bold">${expenseText}</span>`;
+                
+                const amountClass = isIncome ? "text-emerald-600" : "text-slate-800";
+                const sign = isIncome ? "+" : "-";
+
+                html += `
+                    <tr class="border-b border-slate-100 hover:bg-slate-50 transition">
+                        <td class="p-4 text-slate-500 text-sm whitespace-nowrap text-start">${item.dateString}</td>
+                        <td class="p-4 font-medium text-slate-800 text-start">${item.text}</td>
+                        <td class="p-4 text-slate-500 text-sm text-start">${item.category}</td>
+                        <td class="p-4 text-start">${typeBadge}</td>
+                        <td class="p-4 text-end font-bold ${amountClass}">${sign} ${item.amount} ${currency}</td>
+                    </tr>
+                `;
+            });
+            list.innerHTML = html;
+        }
+
+        window.filterData = function() {
+            const searchText = document.getElementById('search-inp').value.toLowerCase();
+            const typeFilter = document.getElementById('type-filter').value;
+            const dateFilter = document.getElementById('date-filter').value;
+
+            const filtered = window.allTransactions.filter(item => {
+                const matchSearch = item.text.toLowerCase().includes(searchText);
+                const matchType = (typeFilter === "all") || (item.type === typeFilter);
+                let matchDate = true;
+                if(dateFilter) {
+                    const itemDateISO = item.dateObj.toISOString().split('T')[0];
+                    matchDate = (itemDateISO === dateFilter);
+                }
+                return matchSearch && matchType && matchDate;
+            });
+            renderTable(filtered);
+        }
+
+        window.resetFilters = function() {
+            document.getElementById('search-inp').value = "";
+            document.getElementById('type-filter').value = "all";
+            document.getElementById('date-filter').value = "";
+            renderTable(window.allTransactions);
+        }
+
+        document.getElementById('search-inp').addEventListener('input', filterData);
+        document.getElementById('type-filter').addEventListener('change', filterData);
+        document.getElementById('date-filter').addEventListener('change', filterData);
+
+        // 🟢 3. دوال التصدير (Excel & PDF)
+        
+        // تصدير Excel
+        window.exportToExcel = function() {
+            if (window.allTransactions.length === 0) { alert(t("no_data")); return; }
+            
+            // تجهيز البيانات بشكل نظيف للإكسيل
+            const dataToExport = window.allTransactions.map(item => ({
+                [t("date")]: item.dateString,
+                [t("description")]: item.text,
+                [t("category")]: item.category,
+                [t("type")]: item.type === "INCOME" ? t("income") : t("expense"),
+                [t("amount")]: item.amount
+            }));
+
+            const ws = XLSX.utils.json_to_sheet(dataToExport);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Transactions");
+            // حفظ الملف
+            XLSX.writeFile(wb, "FinSmart_Report.xlsx");
+        }
+
+        // تصدير PDF
+        window.exportToPDF = function() {
+            const element = document.getElementById('print-area');
+            const opt = {
+                margin: 10,
+                filename: 'FinSmart_Transactions.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 }, // جودة عالية
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            // استخدام المكتبة لتحويل الجدول لـ PDF
+            html2pdf().set(opt).from(element).save();
+        }
+
+    </script>
+</body>
+</html>
